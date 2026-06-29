@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambio Divisas</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#0f172a,#1e3a8a);
+    margin:0;
+    color:white;
+    text-align:center;
+}
+
+header{
+    padding:25px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.card{
+    background:white;
+    color:black;
+    width:90%;
+    max-width:400px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.result{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+footer{
+    margin-top:30px;
+    font-size:12px;
+    opacity:0.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>💱 Cambio de Divisas en Tiempo Real</header>
+
+<div class="card">
+
+<input type="number" id="cantidad" placeholder="Cantidad">
+
+<select id="de">
+<option value="USD">USD - Dólar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="COP">COP - Peso Colombiano</option>
+<option value="MXN">MXN - Peso Mexicano</option>
+<option value="GBP">GBP - Libra</option>
+</select>
+
+<select id="a">
+<option value="COP">COP - Peso Colombiano</option>
+<option value="USD">USD - Dólar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="MXN">MXN - Peso Mexicano</option>
+<option value="GBP">GBP - Libra</option>
+</select>
+
+<button onclick="convertir()">Convertir</button>
+
+<div class="result" id="resultado">Resultado aparecerá aquí</div>
+
+</div>
+
+<footer>© 2026 Cambio Divisas</footer>
+<div style="background:white;color:black;width:90%;max-width:600px;margin:20px auto;padding:20px;border-radius:15px;">
+
+<h2>💡 Información sobre el cambio de divisas</h2>
+
+<p>
+El tipo de cambio es el valor de una moneda en relación con otra. 
+Por ejemplo, cuántos pesos colombianos (COP) necesitas para comprar un dólar (USD).
+</p>
+
+<p>
+Este sitio te permite convertir monedas en tiempo real usando datos actualizados.
+</p>
+
+<h3>📊 Monedas populares</h3>
+
+<ul style="text-align:left;">
+<li>Dólar estadounidense (USD)</li>
+<li>Euro (EUR)</li>
+<li>Peso colombiano (COP)</li>
+<li>Peso mexicano (MXN)</li>
+<li>Libra esterlina (GBP)</li>
+</ul>
+
+</div>
+<script>
+async function convertir(){
+
+    const cantidad = parseFloat(document.getElementById("cantidad").value);
+    const de = document.getElementById("de").value;
+    const a = document.getElementById("a").value;
+
+    if(!cantidad){
+        document.getElementById("resultado").innerHTML = "Ingresa una cantidad válida";
+        return;
+    }
+
+    try {
+
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await res.json();
+
+        const rates = data.rates;
+
+        let enUSD = (de === "USD") ? cantidad : cantidad / rates[de];
+        let resultado = (a === "USD") ? enUSD : enUSD * rates[a];
+
+        document.getElementById("resultado").innerHTML =
+        `${cantidad} ${de} = ${resultado.toFixed(2)} ${a}`;
+
+    } catch (e) {
+        document.getElementById("resultado").innerHTML =
+        "Error al obtener datos";
+    }
+}
+</script>
+
+</body>
+</html>
